@@ -7,7 +7,7 @@ const HallOfFame = ({ entries }) => (
 	<table className="hallOfFame">
 		<tbody>
 			{
-				entries.map((date, guesses, id, player) => (
+				entries.map(({date, guesses, id, player}) => (
 					<tr id={id}>
 						<td className="date">{date}</td>
 						<td className="guesses">{guesses}</td>
