@@ -16,7 +16,7 @@ class App extends Component {
 	getMask()
 	{
 		const mask = [];
-		const key = this.state.key;
+		const key = this.key;
 		for (let i = 0; i < key.length; i++) {
 			mask.push("_");
 		}
