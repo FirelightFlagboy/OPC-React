@@ -5,7 +5,7 @@ import './Keyboard.css'
 
 const Keyboard = ({name, onClick}) => (
 	<button
-		class="letter"
+		className="letter"
 		value={name}
 		name={name}
 		onClick={() => (onClick(name))}

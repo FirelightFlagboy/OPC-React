@@ -9,8 +9,23 @@ class App extends Component {
 		return (ALPHABET.split(''));
 	}
 
+	handlerClick(letter) {
+		console.log(letter);
+	}
+
+	getMask()
+	{
+		const mask = [];
+		const key = this.state.key;
+		for (let i = 0; i < key.length; i++) {
+			mask.push("_");
+		}
+	}
+
 	state = {
 		alphabet: this.generateAlphabet(),
+		key: "BONJOUR".split(''),
+		mask: this.getMask(),
 	}
 
 	render() {
@@ -18,12 +33,13 @@ class App extends Component {
 
 		return (
 			<div className="pendue">
-				<div class="keyboard">
+				<div className="keyboard">
 					{
 						alphabet.map((letter) => (
 							<Keyboard
+								key={letter}
 								name={letter}
-								onClick={null}
+								onClick={this.handlerClick}
 							/>
 						))
 					}
