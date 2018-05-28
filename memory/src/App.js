@@ -6,16 +6,25 @@ import shuffle from 'lodash.shuffle'
 import './App.css'
 import Card from './Card.js'
 import GuessCount from './GuessCount.js'
-import HallOfFame, {
-	FAKE_HOF
-} from './HallOfFame'
+import HallOfFame from './HallOfFame'
+import HighScoreInput from './HighScoreInput.js'
 
 const SIDE = 6;
 const SYMBOLS = '😀🎉💖🎩🐶🐱🦄🐬🌍🌛🌞💫🍎🍌🍓🍐🍟🍿';
-const VISUAL_PAUSE_MSECS = 750;
+const VISUAL_PAUSE_MSECS = 500;
 
 class App extends Component {
 
+	constructor () {
+		super()
+		this.state = {
+			cards: this.generateCards(),
+			currentPair: [],
+			guesses: 0,
+			hallOfFame: null,
+			matchedCardIndices: [],
+		}
+	}
 
 	generateCards() {
 		const result = []
@@ -46,10 +55,10 @@ class App extends Component {
 	handleCardClick = index => {
 		const { currentPair } = this.state
 
+		console.log(index);
 		if (currentPair.length === 2) {
 			return
 		}
-
 		if (currentPair.length === 0) {
 			this.setState({ currentPair: [index] })
 			return
@@ -61,28 +70,28 @@ class App extends Component {
 	handleNewPairClosedBy(index) {
 		const { cards, currentPair, guesses, matchedCardIndices } = this.state
 
+		if (currentPair[0] === index)
+			return ;
 		const newPair = [currentPair[0], index]
 		const newGuesses = guesses + 1
 		const matched = cards[newPair[0]] === cards[newPair[1]]
+		console.log(matched);
+		console.log(newPair);
 		this.setState({ currentPair: newPair, guesses: newGuesses })
 		if (matched) {
-			this.setState({ matchedCardIndices: [...matchedCardIndices, ...newPair] })
+			this.setState({ matchedCardIndices: matchedCardIndices.concat(newPair) })
 		}
 		setTimeout(() => this.setState({ currentPair: [] }), VISUAL_PAUSE_MSECS)
 	}
 
-	state = {
-		cards: this.generateCards(),
-		currentPair: [],
-		guesses: 0,
-		hallOfFame: null,
-		matchedCardIndices: [],
+	displayHallOfFame = (hallOfFame) => {
+		this.setState({ hallOfFame});
 	}
 
 	render() {
-		const { cards, guesses, matchedCardIndices } = this.state;
-		const won = matchedCardIndices.length = cards.length;
-
+		const { cards, guesses, matchedCardIndices, hallOfFame } = this.state;
+		const won = matchedCardIndices.length >= cards.length;
+		console.log(matchedCardIndices, won);
 		return (<div className="memory">
 			<GuessCount guesses={guesses} /> {
 				cards.map((card, index) => (
@@ -95,7 +104,12 @@ class App extends Component {
 					/>
 				))
 			}
-			{won && < HallOfFame entries={FAKE_HOF} />}
+			{
+				won &&
+					((hallOfFame) ?
+					(<HallOfFame entries={hallOfFame} />) :
+					(<HighScoreInput guesses={guesses} onStored={this.displayHallOfFame} />))
+			}
 		</div>
 		)
 	}

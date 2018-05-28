@@ -1,5 +1,9 @@
 {
   "name": "memory",
+  "author": {
+    "name": "fbennetot",
+    "email": "fbenneto@student.42.fr"
+  },
   "version": "0.1.0",
   "private": true,
   "dependencies": {

@@ -1,28 +1,28 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import propTypes from 'prop-types'
 
 import './Card.css'
 
 const HIDDEN_SYMBOL = '❓'
 
-const Card = ({card, feedback, onClick}) => (
-	<div className={`card ${feedback}`} onClick={() => (onClick(card))}>
+const Card = ({card, feedback, onClick, index}) => (
+	<div className={`card ${feedback}`} onClick={() => (onClick(index))}>
 		<span className="symbol">
 			{feedback === 'hidden' ? HIDDEN_SYMBOL : card}
 		</span>
 	</div>
 )
 
-Card.PropTypes = {
-	card: PropTypes.string.isRequired,
-	feedback: PropTypes.oneOf([
+Card.propTypes = {
+	card: propTypes.string.isRequired,
+	feedback: propTypes.oneOf([
 		'hidden',
 		'justMatched',
 		'justMismatched',
 		'visible'
 	]).isRequired,
-	index: PropTypes.number.isRequired,
-	onClick: PropTypes.func.isRequired,
+	index: propTypes.number.isRequired,
+	onClick: propTypes.func.isRequired,
 }
 
 export default Card
