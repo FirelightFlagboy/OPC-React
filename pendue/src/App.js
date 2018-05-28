@@ -3,7 +3,6 @@ import Keyboard from './Keyboard.js'
 import './App.css';
 import data from './liste_francais.json';
 
-const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVXYZW";
 class App extends Component {
 
 	constructor() {
@@ -16,7 +15,9 @@ class App extends Component {
 			alphabet: this.generateAlphabet(),
 			key: this.getKey(),
 			guesse: 0,
-			won: true
+			won: false,
+			letter: [],
+			score: 0,
 		}
 		this.state.mask = this.getMask(null);
 	}
@@ -24,39 +25,67 @@ class App extends Component {
 
 	handlerClick = (usedLetter) => {
 		// get value form state
-		const {key, mask, guesse} = this.state;
+		let { won, letter, key, mask, score, guesse } = this.state;
+		if (won)
+			return ;
 		let nMask = [];
+		let found = false;
 		// create new array
 		for (let i = 0; i < key.length; i++) {
-			if (usedLetter === key[i])
-			nMask.push(usedLetter);
+			if (usedLetter === key[i]) {
+				nMask.push(usedLetter);
+				found = true;
+			}
 			else
-			nMask.push(mask[i]);
+				nMask.push(mask[i]);
 		}
-		let won = nMask.indexOf('_') === -1;
-		console.log(won);
+		// if letter already tested
+		if (letter.indexOf(usedLetter) !== -1) {
+			score -= 2;
+		}
+		else {
+			// add letter to the array
+			letter.push(usedLetter);
+			// if letter in word
+			if (found) {
+				score += 2;
+			} else {
+				score -= 1;
+			}
+		}
+		won = nMask.indexOf('_') === -1;
 		// change state
-		this.setState({mask: nMask, guesse: guesse + 1, won: won});
+		this.setState({
+			letter: letter,
+			mask: nMask,
+			guesse: guesse + 1,
+			won: won,
+			score: score
+		});
 	}
 
 	handleReset = () => {
-		console.log("here");
 		let nKey = this.getKey();
-		console.log(nKey);
 		this.setState((state) => ({
 			key: nKey
 		}));
 		let nMask = this.getMask(nKey);
-		console.log(nMask);
-		this.setState({won: false, key: nKey, mask: nMask, guesse: 0});
+		this.setState({ won: false, key: nKey, mask: nMask, guesse: 0, letter: [] });
 	}
 
 	generateAlphabet() {
-		return (ALPHABET.split(''));
+		let table = [];
+		for (let a = 65; a <= 90; a++) {
+			table.push(String.fromCharCode(a));
+		}
+		return (table);
 	}
 
 	getKey() {
-		return (data.data[Math.floor(Math.random() * data.data.length)].toUpperCase());
+		const index = Math.floor(Math.random() * data.data.length)
+		let word = data.data[index].toUpperCase()
+		console.log(word);
+		return (word);
 	}
 
 	getMask = (word) => {
@@ -65,7 +94,6 @@ class App extends Component {
 		if (word != null) {
 			key = word;
 		}
-		console.log("mask", key);
 		for (let i = 0; i < key.length; i++) {
 			mask.push("_");
 		}
@@ -86,6 +114,7 @@ class App extends Component {
 			}
 		</div>
 	)
+
 	createFlied = (mask) => (
 		// create the field for the word to determine
 		<div className="word">
@@ -103,22 +132,43 @@ class App extends Component {
 	createWin = () => (
 		<div className="win">
 			<h1>Win!</h1>
+			{this.createFlied(this.state.mask)}
 			<button
 				onClick={this.handleReset}
 			>
-			Retry
+				Retry
 			</button>
 		</div>
 	)
+
+	createScore = (guesse, score) => (
+		<div className="guesse">
+			<table>
+				<thead>
+					<tr>
+						<th>Guesse</th>
+						<th>Score</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>{guesse}</td>
+						<td>{score}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	)
+
 	render() {
-		const { alphabet, mask, guesse, won } = this.state;
+		const { alphabet, mask, guesse, won, score } = this.state;
 		return (
 			<div className="pendue">
-				<div className="guesse">guesse : {guesse}</div>
+				{this.createScore(guesse, score)}
 				{
 					won ?
-					this.createWin() :
-					this.createFlied(mask)
+						this.createWin() :
+						this.createFlied(mask)
 				}
 				{this.createKeyboard(alphabet)}
 			</div>
