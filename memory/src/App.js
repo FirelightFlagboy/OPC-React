@@ -55,7 +55,6 @@ class App extends Component {
 	handleCardClick = index => {
 		const { currentPair } = this.state
 
-		console.log(index);
 		if (currentPair.length === 2) {
 			return
 		}
@@ -75,8 +74,6 @@ class App extends Component {
 		const newPair = [currentPair[0], index]
 		const newGuesses = guesses + 1
 		const matched = cards[newPair[0]] === cards[newPair[1]]
-		console.log(matched);
-		console.log(newPair);
 		this.setState({ currentPair: newPair, guesses: newGuesses })
 		if (matched) {
 			this.setState({ matchedCardIndices: matchedCardIndices.concat(newPair) })
@@ -91,7 +88,6 @@ class App extends Component {
 	render() {
 		const { cards, guesses, matchedCardIndices, hallOfFame } = this.state;
 		const won = matchedCardIndices.length >= cards.length;
-		console.log(matchedCardIndices, won);
 		return (<div className="memory">
 			<GuessCount guesses={guesses} /> {
 				cards.map((card, index) => (
@@ -116,3 +112,4 @@ class App extends Component {
 }
 
 export default App
+export { SYMBOLS }
